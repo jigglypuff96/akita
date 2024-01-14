@@ -212,6 +212,7 @@ class Widget implements ZoomHandler {
   _createTitle(div: HTMLDivElement) {
     const titleBar = document.createElement("div");
     titleBar.classList.add("title-bar");
+    titleBar.classList.add("clickable");
     div.appendChild(titleBar);
 
     const title = document.createElement("h6");

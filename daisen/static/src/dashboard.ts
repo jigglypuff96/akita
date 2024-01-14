@@ -460,6 +460,8 @@ class Dashboard {
     li.classList.add("page-item");
     if (currPageNum == 0) {
       li.classList.add("disabled");
+    } else {
+      li.classList.add("clickable");
     }
     li.innerHTML = `
             <a class="page-link" aria-label="Previous">
@@ -486,6 +488,8 @@ class Dashboard {
     li.classList.add("page-item");
     if (currPageNum == totalNumPages - 1) {
       li.classList.add("disabled");
+    } else {
+      li.classList.add("clickable");
     }
     li.innerHTML = `
             <a class="page-link" aria-label="Next">
@@ -517,6 +521,7 @@ class Dashboard {
   _addNumPageButton(ul: HTMLUListElement, pageNum) {
     const li = document.createElement("li");
     li.classList.add("page-item");
+    li.classList.add("clickable");
 
     if (pageNum === this._currPage) {
       li.classList.add("active");
