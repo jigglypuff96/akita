@@ -418,24 +418,28 @@ class Dashboard {
 
     this._addPrevPageButton(ul, this._currPage);
 
-    let offset = -2;
-    if (this._currPage <= 1) {
-      offset = -this._currPage;
-    }
-    if (this._currPage == numPages - 2) {
-      offset = -3;
-    }
-    if (this._currPage == numPages - 1) {
-      offset = -4;
-    }
+    const ellipsisThreshold = 2; // Number of pages before and after current page to show ellipsis
+    const startPage = Math.max(0, this._currPage - ellipsisThreshold);
+    const endPage = Math.min(numPages - 1, this._currPage + ellipsisThreshold);
 
-    for (let i = 0; i < 5; i++) {
-      const pageNum = this._currPage + i + offset;
-      if (pageNum < 0 || pageNum >= numPages) {
-        continue;
+    // Add ellipsis before page buttons if needed
+    if (startPage > 0) {
+      this._addNumPageButton(ul, 0);
+      if (startPage > 1) {
+        this._addEllipsisButton(ul);
       }
+    }
 
-      this._addNumPageButton(ul, pageNum);
+    for (let i = startPage; i <= endPage; i++) {
+      this._addNumPageButton(ul, i);
+    }
+
+    // Add ellipsis after page buttons if needed
+    if (endPage < numPages - 1) {
+      if (endPage < numPages - 2) {
+        this._addEllipsisButton(ul);
+      }
+      this._addNumPageButton(ul, numPages - 1);
     }
 
     this._addNextPageButton(ul, this._currPage, numPages);
@@ -499,25 +503,44 @@ class Dashboard {
     ul.appendChild(li);
   }
 
-  _addNumPageButton(ul: HTMLUListElement, pageNum: number) {
+  _addEllipsisButton(ul: HTMLUListElement) {
     const li = document.createElement("li");
     li.classList.add("page-item");
-    if (pageNum == this._currPage) {
-      li.classList.add("active");
-    }
     li.innerHTML = `
-            <a class="page-link">
-                ${pageNum}
-            </a>
-        `;
-
-    li.onclick = () => {
-      this._switchToPage(pageNum);
-    };
-
+        <a class="page-link" style="cursor: not-allowed;" aria-hidden="true">
+            ...
+        </a>
+    `;
     ul.appendChild(li);
   }
 
+  _addNumPageButton(ul: HTMLUListElement, pageNum) {
+    const li = document.createElement("li");
+    li.classList.add("page-item");
+
+    if (pageNum === this._currPage) {
+      li.classList.add("active");
+    }
+
+    if (pageNum === "...") {
+      li.innerHTML = `
+          <a class="page-link" style="cursor: not-allowed;" aria-hidden="true">
+              ...
+          </a>
+      `;
+    } else {
+      li.innerHTML = `
+          <a class="page-link">
+              ${pageNum}
+          </a>
+      `;
+      li.onclick = () => {
+        this._switchToPage(pageNum);
+      };
+    }
+
+    ul.appendChild(li);
+  }
   _switchToPage(pageNum: number) {
     this._currPage = pageNum;
 
